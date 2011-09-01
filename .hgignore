@@ -1,0 +1,4 @@
+syntax: glob
+build.xml
+nbproject/
+lib/nblibraries.properties
