@@ -1,5 +1,6 @@
 syntax: glob
 build.xml
-nbproject/
+nbproject/private/
 lib/nblibraries.properties
 build/
+nbproject/genfiles.properties

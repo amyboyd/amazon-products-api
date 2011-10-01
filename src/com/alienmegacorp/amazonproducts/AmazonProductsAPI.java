@@ -11,99 +11,64 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
-import play.Logger;
-import play.Play;
 
 /**
- * Multiton -- one instance per country endpoint.
+ * Finds products through the Amazon Products API.
+ *
+ * @author Michael Boyd <michael@alienmegacorp.com>
+ * @version r1
  */
 public class AmazonProductsAPI {
     /*
      * Your AWS Access Key ID, as taken from the AWS Your Account page.
      */
-    final private String AWS_ACCESS_KEY;
+    private final String awsAccessKey;
 
     /*
      * Your AWS Secret Key corresponding to the above ID, as taken from the AWS Your Account page.
      */
-    final private String AWS_SECRET_KEY;
+    private final String awsSecretKey;
 
-    /*
-     * US: ecs.amazonaws.com
-     * CA: ecs.amazonaws.ca
-     * GB: ecs.amazonaws.co.uk
-     * DE: ecs.amazonaws.de
-     * FR: ecs.amazonaws.fr
-     * JP: ecs.amazonaws.jp
-     */
-    private final String API_ENDPOINT;
+    private final Endpoint endpoint;
 
     private SignedRequestsHelper helper;
 
     private static Unmarshaller unmarshaller;
 
-    /**
-     * Multiton holder -- one instance for each Amazon site.
-     */
-    final private static Map<String, AmazonProductsAPI> INSTANCES = new HashMap<String, AmazonProductsAPI>(8);
-
     static {
         try {
             unmarshaller = JAXBContext.newInstance("com.lights51.amazon.internals").createUnmarshaller();
-        } catch (final JAXBException ex) {
-            Logger.error(ex, "Unmarshalling exception");
+        } catch (JAXBException ex) {
+            Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    /**
-     * Construct the ProductApi on first call. All subsequent calls return the already-created
-     * instance.
-     * @param endpoint If null, the return value will also be null.
-     * @return May be null.
-     */
-    public static AmazonProductsAPI getInstance(final IEndpoint endpoint) {
-        if (endpoint == null) {
-            return null;
-        }
-        final String apiEndpoint = endpoint.getApiEndpoint();
-
-        if (!INSTANCES.containsKey(apiEndpoint)) {
-            final Properties props = Play.configuration;
-            final AmazonProductsAPI inst = new AmazonProductsAPI(props.getProperty("aws.access_key"), props.getProperty("aws.secret_key"), apiEndpoint);
-
-            INSTANCES.put(apiEndpoint, inst);
-        }
-
-        return INSTANCES.get(apiEndpoint);
-    }
-
-    private AmazonProductsAPI(final String awsAccessKey, final String awsSecretKey, final String endpoint) {
+    private AmazonProductsAPI(final String awsAccessKey, final String awsSecretKey, final Endpoint endpoint) {
         if (awsAccessKey.length() != 20) {
             throw new IllegalArgumentException("AWS access key length must be 20, got: " + awsAccessKey);
         }
         if (awsSecretKey.length() != 40) {
             throw new IllegalArgumentException("AWS secret key length must be 40, got: " + awsSecretKey);
         }
-        if (endpoint.matches("^ecs\\.amazonaws\\.[a-z\\.]+$") == false) {
-            throw new IllegalArgumentException("ECS endpoint invalid: " + endpoint);
-        }
 
-        Logger.info("Creating ProductsApi instance for endpoint: " + endpoint);
-        Logger.info("Access key: " + awsAccessKey + ", secret key: " + awsSecretKey);
+        Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.INFO, "Creating ProductsApi instance for endpoint: {0}", endpoint);
+        Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.INFO, "Access key: {0}, secret key: {1}", new Object[] { awsAccessKey, awsSecretKey });
 
-        AWS_ACCESS_KEY = awsAccessKey;
-        AWS_SECRET_KEY = awsSecretKey;
-        API_ENDPOINT = endpoint;
+        this.awsAccessKey = awsAccessKey;
+        this.awsSecretKey = awsSecretKey;
+        this.endpoint = endpoint;
 
         try {
-            helper = SignedRequestsHelper.getInstance(API_ENDPOINT, AWS_ACCESS_KEY, AWS_SECRET_KEY);
+            helper = SignedRequestsHelper.getInstance(this.endpoint.getAPIdomain(), this.awsAccessKey, this.awsSecretKey);
         } catch (final Exception ex) {
-            Logger.error(ex, "Amazon request sign error");
+            Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.SEVERE, "Amazon request sign error", ex);
         }
     }
 
@@ -123,7 +88,7 @@ public class AmazonProductsAPI {
         try {
             final File file = getCacheFile("ItemLookup", asin);
             if (!file.exists()) {
-                Utils.copy(new URL(signUrl(params)), file, false);
+                Utils.copy(new URL(signUrl(params)), file);
                 Utils.replaceLiteralInFile(file, " xmlns=\"http://webservices.amazon.com/AWSECommerceService/2009-11-01\"", "");
             }
 
@@ -132,10 +97,8 @@ public class AmazonProductsAPI {
             is.close();
 
             return irl.getItems().get(0).getItem().get(0);
-        } catch (final java.io.IOException ex) {
-            Logger.error("ItemLookup IOException: " + ex.getMessage());
-        } catch (final javax.xml.bind.JAXBException ex) {
-            Logger.error("ItemLookup JAXBException: " + ex.getMessage());
+        } catch (final Exception ex) {
+            Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return null;
@@ -165,7 +128,7 @@ public class AmazonProductsAPI {
         try {
             final File file = getCacheFile("ItemSearch", DigestUtils.shaHex(query));
             if (!file.exists()) {
-                Utils.copy(new URL(signUrl(params)), file, false);
+                Utils.copy(new URL(signUrl(params)), file);
                 Utils.replaceLiteralInFile(file, " xmlns=\"http://webservices.amazon.com/AWSECommerceService/2009-11-01\"", "");
             }
 
@@ -174,10 +137,8 @@ public class AmazonProductsAPI {
             is.close();
 
             return response.getItems().get(0).getItem();
-        } catch (final java.io.IOException ex) {
-            Logger.error("ItemSearch IOException: " + ex.getMessage());
-        } catch (final javax.xml.bind.JAXBException ex) {
-            Logger.error("ItemSearch JAXBException: " + ex.getMessage());
+        } catch (final Exception ex) {
+            Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return null;
@@ -193,7 +154,7 @@ public class AmazonProductsAPI {
     }
 
     private File getCacheFile(final String operation, final String filename) {
-        final File file = Play.getFile("tmp/" + API_ENDPOINT + "-" + operation + "/" + filename + ".xml");
+        final File file = new File("/tmp/" + endpoint.name() + "-" + operation + "/" + filename + ".xml");
         if (file.getTotalSpace() == 0l) {
             file.delete();
         }
@@ -251,7 +212,7 @@ public class AmazonProductsAPI {
          */
         private static final String REQUEST_METHOD = "GET";
 
-        private String endpoint = null;
+        private String apiDomain = null;
 
         private String awsAccessKey = null;
 
@@ -268,7 +229,7 @@ public class AmazonProductsAPI {
         /**
          * You must provide the three values below to initialize the helper.
          *
-         * @param endpoint Destination for the requests, e.g. "ecs.amazonaws.jp".
+         * @param apiDomain Destination for the requests, e.g. "ecs.amazonaws.jp".
          * @param awsAccessKey
          * @param awsSecretKey
          * @return
@@ -276,10 +237,10 @@ public class AmazonProductsAPI {
          * @throws NoSuchAlgorithmException
          * @throws InvalidKeyException
          */
-        static SignedRequestsHelper getInstance(final String endpoint, final String awsAccessKey,
+        static SignedRequestsHelper getInstance(final String apiDomain, final String awsAccessKey,
                 final String awsSecretKey)
                 throws IllegalArgumentException, NoSuchAlgorithmException, InvalidKeyException {
-            if ((null == endpoint) || (endpoint.length() == 0)) {
+            if ((null == apiDomain) || (apiDomain.length() == 0)) {
                 throw new IllegalArgumentException("endpoint is null or empty");
             }
             if ((null == awsAccessKey) || (awsAccessKey.length() == 0)) {
@@ -290,7 +251,7 @@ public class AmazonProductsAPI {
             }
 
             final SignedRequestsHelper instance = new SignedRequestsHelper();
-            instance.endpoint = endpoint.toLowerCase();
+            instance.apiDomain = apiDomain.toLowerCase();
             instance.awsAccessKey = awsAccessKey;
             instance.awsSecretKey = awsSecretKey;
 
@@ -299,7 +260,7 @@ public class AmazonProductsAPI {
                 secretyKeyBytes = instance.awsSecretKey.getBytes(UTF8_CHARSET);
             } catch (final UnsupportedEncodingException ex) {
                 secretyKeyBytes = new byte[] {};
-                Logger.error(ex, ex.getMessage());
+                Logger.getLogger(SignedRequestsHelper.class.getName()).log(Level.SEVERE, null, ex);
             }
             instance.secretKeySpec = new SecretKeySpec(secretyKeyBytes, HMAC_SHA256_ALGORITHM);
             instance.mac = Mac.getInstance(HMAC_SHA256_ALGORITHM);
@@ -322,7 +283,7 @@ public class AmazonProductsAPI {
             final SortedMap<String, String> sortedParamMap = new TreeMap<String, String>(params);
 
             final String canonicalQS = Utils.mapToQueryString(sortedParamMap);
-            final String toSign = REQUEST_METHOD + "\n" + endpoint + "\n" + REQUEST_URI + "\n" + canonicalQS;
+            final String toSign = REQUEST_METHOD + "\n" + apiDomain + "\n" + REQUEST_URI + "\n" + canonicalQS;
             String sig = Utils.percentEncodeRfc3986(hmac(toSign));
 
             // When <code>canonicalQS</code> is empty, a line break is at the end of the signature. Remove it.
@@ -330,7 +291,7 @@ public class AmazonProductsAPI {
                 sig = sig.substring(0, sig.length() - 6);
             }
 
-            return "http://" + endpoint + REQUEST_URI + "?" + canonicalQS + "&Signature=" + sig;
+            return "http://" + apiDomain + REQUEST_URI + "?" + canonicalQS + "&Signature=" + sig;
         }
 
         /**
@@ -376,5 +337,25 @@ public class AmazonProductsAPI {
             dfm.setTimeZone(TimeZone.getTimeZone("GMT"));
             return dfm.format(cal.getTime());
         }
+    }
+
+    // AmazonProductsAPI factory ////////////////////////////////
+    /**
+     * One instance for each Amazon site.
+     */
+    final private static EnumMap<Endpoint, AmazonProductsAPI> INSTANCES = new EnumMap<Endpoint, AmazonProductsAPI>(Endpoint.class);
+
+    /**
+     * Get a {@link AmazonProductsAPI}.
+     */
+    public static AmazonProductsAPI getInstance(final Endpoint endpoint,
+            final String awsAccessKey, final String awsSecretKey) {
+        if (!INSTANCES.containsKey(endpoint)) {
+            final AmazonProductsAPI inst = new AmazonProductsAPI(awsAccessKey, awsSecretKey, endpoint);
+
+            INSTANCES.put(endpoint, inst);
+        }
+
+        return INSTANCES.get(endpoint);
     }
 }
