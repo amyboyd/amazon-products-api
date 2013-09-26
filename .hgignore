@@ -1,6 +1,0 @@
-syntax: glob
-build.xml
-nbproject/private/
-lib/nblibraries.properties
-build/
-nbproject/genfiles.properties
