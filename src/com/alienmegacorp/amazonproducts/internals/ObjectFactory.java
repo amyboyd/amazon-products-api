@@ -10,7 +10,7 @@ import javax.xml.namespace.QName;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the com.lights51.amazon.internals package.
+ * generated in the com.alienmegacorp.amazonproducts.internals package.
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -29,7 +29,7 @@ public class ObjectFactory {
     final private static QName _AudienceRating_QNAME = new QName("http://webservices.amazon.com/AWSECommerceService/2010-04-01", "AudienceRating");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.lights51.amazon.internals
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.alienmegacorp.amazonproducts.internals
      * 
      */
     public ObjectFactory() {
@@ -380,7 +380,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link com.lights51.amazon.internals.Item.VariationAttributes }
+     * Create an instance of {@link com.alienmegacorp.amazonproducts.internals.Item.VariationAttributes }
      * 
      */
     public com.alienmegacorp.amazonproducts.internals.Item.VariationAttributes createItemVariationAttributes() {
@@ -484,7 +484,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link com.lights51.amazon.internals.Item.ImageSets }
+     * Create an instance of {@link com.alienmegacorp.amazonproducts.internals.Item.ImageSets }
      * 
      */
     public com.alienmegacorp.amazonproducts.internals.Item.ImageSets createItemImageSets() {
@@ -580,7 +580,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link com.lights51.amazon.internals.Item }
+     * Create an instance of {@link com.alienmegacorp.amazonproducts.internals.Item }
      * 
      */
     public com.alienmegacorp.amazonproducts.internals.Item createItem() {
@@ -1260,7 +1260,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link com.lights51.amazon.internals.Item.Subjects }
+     * Create an instance of {@link com.alienmegacorp.amazonproducts.internals.Item.Subjects }
      * 
      */
     public com.alienmegacorp.amazonproducts.internals.Item.Subjects createItemSubjects() {
@@ -1340,7 +1340,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link com.lights51.amazon.internals.Item.AlternateVersions }
+     * Create an instance of {@link com.alienmegacorp.amazonproducts.internals.Item.AlternateVersions }
      * 
      */
     public com.alienmegacorp.amazonproducts.internals.Item.AlternateVersions createItemAlternateVersions() {
@@ -1764,7 +1764,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link com.lights51.amazon.internals.Item.AlternateVersions.AlternateVersion }
+     * Create an instance of {@link com.alienmegacorp.amazonproducts.internals.Item.AlternateVersions.AlternateVersion }
      * 
      */
     public com.alienmegacorp.amazonproducts.internals.Item.AlternateVersions.AlternateVersion createItemAlternateVersionsAlternateVersion() {
@@ -2060,7 +2060,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link com.lights51.amazon.internals.Items }
+     * Create an instance of {@link com.alienmegacorp.amazonproducts.internals.Items }
      * 
      */
     public com.alienmegacorp.amazonproducts.internals.Items createItems() {

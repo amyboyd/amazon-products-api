@@ -17,7 +17,7 @@ public interface AWSECommerceServicePortType
 {
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.HelpResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.HelpResponse
      */
     @WebMethod(operationName = "Help", action = "http://soap.amazon.com/Help")
     @WebResult(name = "HelpResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -26,7 +26,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.ItemSearchResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.ItemSearchResponse
      */
     @WebMethod(operationName = "ItemSearch", action = "http://soap.amazon.com/ItemSearch")
     @WebResult(name = "ItemSearchResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -35,7 +35,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.ItemLookupResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.ItemLookupResponse
      */
     @WebMethod(operationName = "ItemLookup", action = "http://soap.amazon.com/ItemLookup")
     @WebResult(name = "ItemLookupResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -44,7 +44,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.BrowseNodeLookupResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.BrowseNodeLookupResponse
      */
     @WebMethod(operationName = "BrowseNodeLookup", action = "http://soap.amazon.com/BrowseNodeLookup")
     @WebResult(name = "BrowseNodeLookupResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -53,7 +53,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.ListSearchResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.ListSearchResponse
      */
     @WebMethod(operationName = "ListSearch", action = "http://soap.amazon.com/ListSearch")
     @WebResult(name = "ListSearchResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -62,7 +62,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.ListLookupResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.ListLookupResponse
      */
     @WebMethod(operationName = "ListLookup", action = "http://soap.amazon.com/ListLookup")
     @WebResult(name = "ListLookupResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -71,7 +71,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.CustomerContentSearchResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.CustomerContentSearchResponse
      */
     @WebMethod(operationName = "CustomerContentSearch", action = "http://soap.amazon.com/CustomerContentSearch")
     @WebResult(name = "CustomerContentSearchResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -80,7 +80,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.CustomerContentLookupResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.CustomerContentLookupResponse
      */
     @WebMethod(operationName = "CustomerContentLookup", action = "http://soap.amazon.com/CustomerContentLookup")
     @WebResult(name = "CustomerContentLookupResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -89,7 +89,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.SimilarityLookupResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.SimilarityLookupResponse
      */
     @WebMethod(operationName = "SimilarityLookup", action = "http://soap.amazon.com/SimilarityLookup")
     @WebResult(name = "SimilarityLookupResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -98,7 +98,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.SellerLookupResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.SellerLookupResponse
      */
     @WebMethod(operationName = "SellerLookup", action = "http://soap.amazon.com/SellerLookup")
     @WebResult(name = "SellerLookupResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -107,7 +107,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.CartGetResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.CartGetResponse
      */
     @WebMethod(operationName = "CartGet", action = "http://soap.amazon.com/CartGet")
     @WebResult(name = "CartGetResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -116,7 +116,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.CartCreateResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.CartCreateResponse
      */
     @WebMethod(operationName = "CartCreate", action = "http://soap.amazon.com/CartCreate")
     @WebResult(name = "CartCreateResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -125,7 +125,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.CartAddResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.CartAddResponse
      */
     @WebMethod(operationName = "CartAdd", action = "http://soap.amazon.com/CartAdd")
     @WebResult(name = "CartAddResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -134,7 +134,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.CartModifyResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.CartModifyResponse
      */
     @WebMethod(operationName = "CartModify", action = "http://soap.amazon.com/CartModify")
     @WebResult(name = "CartModifyResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -143,7 +143,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.CartClearResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.CartClearResponse
      */
     @WebMethod(operationName = "CartClear", action = "http://soap.amazon.com/CartClear")
     @WebResult(name = "CartClearResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -152,7 +152,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.TransactionLookupResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.TransactionLookupResponse
      */
     @WebMethod(operationName = "TransactionLookup", action = "http://soap.amazon.com/TransactionLookup")
     @WebResult(name = "TransactionLookupResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -161,7 +161,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.SellerListingSearchResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.SellerListingSearchResponse
      */
     @WebMethod(operationName = "SellerListingSearch", action = "http://soap.amazon.com/SellerListingSearch")
     @WebResult(name = "SellerListingSearchResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -170,7 +170,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.SellerListingLookupResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.SellerListingLookupResponse
      */
     @WebMethod(operationName = "SellerListingLookup", action = "http://soap.amazon.com/SellerListingLookup")
     @WebResult(name = "SellerListingLookupResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -179,7 +179,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.TagLookupResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.TagLookupResponse
      */
     @WebMethod(operationName = "TagLookup", action = "http://soap.amazon.com/TagLookup")
     @WebResult(name = "TagLookupResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -188,7 +188,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.VehicleSearchResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.VehicleSearchResponse
      */
     @WebMethod(operationName = "VehicleSearch", action = "http://soap.amazon.com/VehicleSearch")
     @WebResult(name = "VehicleSearchResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -197,7 +197,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.VehiclePartSearchResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.VehiclePartSearchResponse
      */
     @WebMethod(operationName = "VehiclePartSearch", action = "http://soap.amazon.com/VehiclePartSearch")
     @WebResult(name = "VehiclePartSearchResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -206,7 +206,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.VehiclePartLookupResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.VehiclePartLookupResponse
      */
     @WebMethod(operationName = "VehiclePartLookup", action = "http://soap.amazon.com/VehiclePartLookup")
     @WebResult(name = "VehiclePartLookupResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")
@@ -215,7 +215,7 @@ public interface AWSECommerceServicePortType
 
     /**
      * @param body
-     * @return returns com.lights51.amazon.internals.MultiOperationResponse
+     * @return returns com.alienmegacorp.amazonproducts.internals.MultiOperationResponse
      */
     @WebMethod(operationName = "MultiOperation", action = "http://soap.amazon.com/MultiOperation")
     @WebResult(name = "MultiOperationResponse", targetNamespace = "http://webservices.amazon.com/AWSECommerceService/2010-04-01", partName = "body")

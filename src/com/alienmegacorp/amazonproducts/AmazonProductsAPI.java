@@ -44,7 +44,7 @@ public class AmazonProductsAPI {
 
     static {
         try {
-            unmarshaller = JAXBContext.newInstance("com.lights51.amazon.internals").createUnmarshaller();
+            unmarshaller = JAXBContext.newInstance("com.alienmegacorp.amazonproducts.internals").createUnmarshaller();
         } catch (JAXBException ex) {
             Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.SEVERE, null, ex);
         }

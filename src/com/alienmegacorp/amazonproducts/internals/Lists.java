@@ -144,7 +144,7 @@ public class Lists {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link com.lights51.amazon.internals.List }
+     * {@link com.alienmegacorp.amazonproducts.internals.List }
      * 
      * 
      */
