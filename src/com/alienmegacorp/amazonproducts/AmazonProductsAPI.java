@@ -36,6 +36,8 @@ public class AmazonProductsAPI {
      */
     private final String awsSecretKey;
 
+    private final String awsAssociateTag;
+
     private final Endpoint endpoint;
 
     private SignedRequestsHelper helper;
@@ -50,7 +52,7 @@ public class AmazonProductsAPI {
         }
     }
 
-    private AmazonProductsAPI(final String awsAccessKey, final String awsSecretKey, final Endpoint endpoint) {
+    private AmazonProductsAPI(final String awsAccessKey, final String awsSecretKey, final String awsAssociateTag, final Endpoint endpoint) {
         if (awsAccessKey.length() != 20) {
             throw new IllegalArgumentException("AWS access key length must be 20, got: " + awsAccessKey);
         }
@@ -58,11 +60,12 @@ public class AmazonProductsAPI {
             throw new IllegalArgumentException("AWS secret key length must be 40, got: " + awsSecretKey);
         }
 
-        Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.INFO, "Creating ProductsApi instance for endpoint: {0}", endpoint);
-        Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.INFO, "Access key: {0}, secret key: {1}", new Object[] { awsAccessKey, awsSecretKey });
+        Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.INFO, "Creating AmazonProductsAPI instance for endpoint: {0}", endpoint);
+        Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.INFO, "Access key: {0}, secret key: {1}, associate tag", new Object[] { awsAccessKey, awsSecretKey, awsAssociateTag });
 
         this.awsAccessKey = awsAccessKey;
         this.awsSecretKey = awsSecretKey;
+        this.awsAssociateTag = awsAssociateTag;
         this.endpoint = endpoint;
 
         try {
@@ -148,6 +151,7 @@ public class AmazonProductsAPI {
      * Add default params to the given params, and sign the URL as Amazon wants it to be signed.
      */
     private String signUrl(final Map<String, String> params) {
+        params.put("AssociateTag", awsAssociateTag);
         params.put("Service", "AWSECommerceService");
         params.put("Version", "2009-11-01");
         return helper.sign(params);
@@ -349,9 +353,9 @@ public class AmazonProductsAPI {
      * Get a {@link AmazonProductsAPI}.
      */
     public static AmazonProductsAPI getInstance(final Endpoint endpoint,
-            final String awsAccessKey, final String awsSecretKey) {
+            final String awsAccessKey, final String awsSecretKey, final String awsAssociateTag) {
         if (!INSTANCES.containsKey(endpoint)) {
-            final AmazonProductsAPI inst = new AmazonProductsAPI(awsAccessKey, awsSecretKey, endpoint);
+            final AmazonProductsAPI inst = new AmazonProductsAPI(awsAccessKey, awsSecretKey, awsAssociateTag, endpoint);
 
             INSTANCES.put(endpoint, inst);
         }
