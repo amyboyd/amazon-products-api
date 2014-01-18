@@ -74,7 +74,7 @@ public class AmazonProductsAPI {
         this.endpoint = endpoint;
 
         try {
-            helper = SignedRequestsHelper.getInstance(this.endpoint.getAPIdomain(), this.awsAccessKey, this.awsSecretKey);
+            helper = SignedRequestsHelper.getInstance(this.endpoint.getAPIdomain(), this.awsSecretKey);
         }
         catch (final Exception ex) {
             Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.SEVERE, "Amazon request sign error", ex);
@@ -89,29 +89,13 @@ public class AmazonProductsAPI {
      * @param responseGroups Comma-seperated response groups.
      */
     public Item itemLookup(final String asin, final String responseGroups) {
-        final Map<String, String> params = new HashMap<String, String>(5);
+        final Map<String, String> params = new HashMap<String, String>();
         params.put("Operation", "ItemLookup");
         params.put("ItemId", asin);
         params.put("ResponseGroup", responseGroups);
 
-        try {
-            final File file = getCacheFile("ItemLookup", asin);
-            if (!file.exists()) {
-                Utils.copy(new URL(signUrl(params)), file);
-                Utils.replaceLiteralInFile(file, " xmlns=\"http://webservices.amazon.com/AWSECommerceService/" + API_VERSION + "\"", "");
-            }
-
-            final InputStream is = new FileInputStream(file);
-            final ItemLookupResponse irl = (ItemLookupResponse) unmarshaller.unmarshal(is);
-            is.close();
-
-            return irl.getItems().get(0).getItem().get(0);
-        }
-        catch (final Exception ex) {
-            Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return null;
+        final ItemLookupResponse response = (ItemLookupResponse) fetchFromUrlOrCacheAndUnmarshal(params, asin);
+        return response.getItems().get(0).getItem().get(0);
     }
 
     /**
@@ -129,24 +113,40 @@ public class AmazonProductsAPI {
      *      'Watches','Wireless','WirelessAccessories'.
      */
     public List<Item> itemSearch(final String query, final String responseGroup, final String searchIndex) {
-        final Map<String, String> params = new HashMap<String, String>(6);
+        final Map<String, String> params = new HashMap<String, String>();
         params.put("SearchIndex", searchIndex);
         params.put("Operation", "ItemSearch");
         params.put("Keywords", query);
         params.put("ResponseGroup", responseGroup);
 
+        final ItemSearchResponse response = (ItemSearchResponse) fetchFromUrlOrCacheAndUnmarshal(params, DigestUtils.shaHex(query));
+        return response.getItems().get(0).getItem();
+    }
+
+    private Object fetchFromUrlOrCacheAndUnmarshal(final Map<String, String> params, final String cacheKey) {
+        if (!params.containsKey("Operation")) {
+            throw new RuntimeException("params must have an Operation");
+        }
+        final String operation = params.get("Operation");
+
         try {
-            final File file = getCacheFile("ItemSearch", DigestUtils.shaHex(query));
+            final File file = getCacheFile(operation, cacheKey);
             if (!file.exists()) {
-                Utils.copy(new URL(signUrl(params)), file);
-                Utils.replaceLiteralInFile(file, " xmlns=\"http://webservices.amazon.com/AWSECommerceService/" + API_VERSION + "\"", "");
+                // Add global params that all requests need.
+                addGlobalParams(params);
+                // Sign the params in a URL as Amazon specifies.
+                final URL url = new URL(helper.sign(params));
+                // Copy the response to our cache file.
+                Utils.copy(url, file);
             }
 
+            // Unmarshal.
+            Utils.replaceLiteralInFile(file, " xmlns=\"http://webservices.amazon.com/AWSECommerceService/" + API_VERSION + "\"", "");
             final InputStream is = new FileInputStream(file);
-            final ItemSearchResponse response = (ItemSearchResponse) unmarshaller.unmarshal(is);
+            final Object response = unmarshaller.unmarshal(is);
             is.close();
 
-            return response.getItems().get(0).getItem();
+            return response;
         }
         catch (final Exception ex) {
             Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.SEVERE, null, ex);
@@ -156,14 +156,14 @@ public class AmazonProductsAPI {
     }
 
     /**
-     * Add default params to the given params, and sign the URL as Amazon wants it to be signed.
+     * Add global params that all requests need.
      */
-    private String signUrl(final Map<String, String> params) {
+    private void addGlobalParams(final Map<String, String> params) {
         params.put("AWSAccessKeyId", awsAccessKey);
         params.put("AssociateTag", awsAssociateTag);
         params.put("Service", "AWSECommerceService");
         params.put("Version", API_VERSION);
-        return helper.sign(params);
+        params.put("Timestamp", timestamp());
     }
 
     private File getCacheFile(final String operation, final String filename) {
@@ -172,6 +172,18 @@ public class AmazonProductsAPI {
             file.delete();
         }
         return file;
+    }
+
+    /**
+     * Generate a ISO-8601 format timestamp as required by Amazon.
+     *
+     * @return ISO-8601 format timestamp.
+     */
+    private String timestamp() {
+        final Calendar cal = Calendar.getInstance();
+        final DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        dfm.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return dfm.format(cal.getTime());
     }
 
     /**
@@ -229,8 +241,6 @@ public class AmazonProductsAPI {
 
         private String apiDomain = null;
 
-        private String awsAccessKey = null;
-
         private String awsSecretKey = null;
 
         private SecretKeySpec secretKeySpec = null;
@@ -245,21 +255,16 @@ public class AmazonProductsAPI {
          * You must provide the three values below to initialize the helper.
          *
          * @param apiDomain Destination for the requests, e.g. "ecs.amazonaws.jp".
-         * @param awsAccessKey
          * @param awsSecretKey
          * @return
          * @throws IllegalArgumentException if any of the params are invalid.
          * @throws NoSuchAlgorithmException
          * @throws InvalidKeyException
          */
-        static SignedRequestsHelper getInstance(final String apiDomain, final String awsAccessKey,
-                final String awsSecretKey)
+        static SignedRequestsHelper getInstance(final String apiDomain, final String awsSecretKey)
                 throws IllegalArgumentException, NoSuchAlgorithmException, InvalidKeyException {
             if ((null == apiDomain) || (apiDomain.length() == 0)) {
                 throw new IllegalArgumentException("endpoint is null or empty");
-            }
-            if ((null == awsAccessKey) || (awsAccessKey.length() == 0)) {
-                throw new IllegalArgumentException("awsAccessKey is null or empty");
             }
             if ((null == awsSecretKey) || (awsSecretKey.length() == 0)) {
                 throw new IllegalArgumentException("awsSecretKey is null or empty");
@@ -267,7 +272,6 @@ public class AmazonProductsAPI {
 
             final SignedRequestsHelper instance = new SignedRequestsHelper();
             instance.apiDomain = apiDomain.toLowerCase();
-            instance.awsAccessKey = awsAccessKey;
             instance.awsSecretKey = awsSecretKey;
 
             byte[] secretyKeyBytes;
@@ -291,8 +295,6 @@ public class AmazonProductsAPI {
          * and Amazon will reject the request.
          */
         String sign(final Map<String, String> params) {
-            params.put("Timestamp", timestamp());
-
             // The parameters need to be processed in lexicographical order, so we'll use a TreeMap
             // implementation for that.
             final SortedMap<String, String> sortedParamMap = new TreeMap<String, String>(params);
@@ -340,18 +342,6 @@ public class AmazonProductsAPI {
                 throw new RuntimeException(UTF8_CHARSET + " is unsupported!", ex);
             }
             return signature;
-        }
-
-        /**
-         * Generate a ISO-8601 format timestamp as required by Amazon.
-         *
-         * @return ISO-8601 format timestamp.
-         */
-        private String timestamp() {
-            final Calendar cal = Calendar.getInstance();
-            final DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-            dfm.setTimeZone(TimeZone.getTimeZone("GMT"));
-            return dfm.format(cal.getTime());
         }
     }
 
