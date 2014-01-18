@@ -44,6 +44,8 @@ public class AmazonProductsAPI {
 
     private static Unmarshaller unmarshaller;
 
+    private static final String API_VERSION = "2011-08-01";
+
     static {
         try {
             unmarshaller = JAXBContext.newInstance("com.alienmegacorp.amazonproducts.internals").createUnmarshaller();
@@ -60,8 +62,11 @@ public class AmazonProductsAPI {
             throw new IllegalArgumentException("AWS secret key length must be 40, got: " + awsSecretKey);
         }
 
-        Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.INFO, "Creating AmazonProductsAPI instance for endpoint: {0}", endpoint);
-        Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.INFO, "Access key: {0}, secret key: {1}, associate tag", new Object[] { awsAccessKey, awsSecretKey, awsAssociateTag });
+        Logger.getLogger(AmazonProductsAPI.class.getName()).log(
+            Level.INFO,
+            "Creating AmazonProductsAPI instance for endpoint: {0}, access key: {1}, secret key: {2}, associate tag {3}",
+            new Object[] { endpoint, awsAccessKey, awsSecretKey, awsAssociateTag }
+        );
 
         this.awsAccessKey = awsAccessKey;
         this.awsSecretKey = awsSecretKey;
@@ -92,7 +97,7 @@ public class AmazonProductsAPI {
             final File file = getCacheFile("ItemLookup", asin);
             if (!file.exists()) {
                 Utils.copy(new URL(signUrl(params)), file);
-                Utils.replaceLiteralInFile(file, " xmlns=\"http://webservices.amazon.com/AWSECommerceService/2009-11-01\"", "");
+                Utils.replaceLiteralInFile(file, " xmlns=\"http://webservices.amazon.com/AWSECommerceService/" + API_VERSION + "\"", "");
             }
 
             final InputStream is = new FileInputStream(file);
@@ -132,7 +137,7 @@ public class AmazonProductsAPI {
             final File file = getCacheFile("ItemSearch", DigestUtils.shaHex(query));
             if (!file.exists()) {
                 Utils.copy(new URL(signUrl(params)), file);
-                Utils.replaceLiteralInFile(file, " xmlns=\"http://webservices.amazon.com/AWSECommerceService/2009-11-01\"", "");
+                Utils.replaceLiteralInFile(file, " xmlns=\"http://webservices.amazon.com/AWSECommerceService/" + API_VERSION + "\"", "");
             }
 
             final InputStream is = new FileInputStream(file);
@@ -153,7 +158,7 @@ public class AmazonProductsAPI {
     private String signUrl(final Map<String, String> params) {
         params.put("AssociateTag", awsAssociateTag);
         params.put("Service", "AWSECommerceService");
-        params.put("Version", "2009-11-01");
+        params.put("Version", API_VERSION);
         return helper.sign(params);
     }
 
