@@ -22,8 +22,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 /**
  * Finds products through the Amazon Products API.
  *
- * @author Michael Boyd <michael@alienmegacorp.com>
- * @version r1
+ * Operations supported so far are: ItemLookup, ItemSearch.
  */
 public class AmazonProductsAPI {
     /*
@@ -49,7 +48,8 @@ public class AmazonProductsAPI {
     static {
         try {
             unmarshaller = JAXBContext.newInstance("com.alienmegacorp.amazonproducts.internals").createUnmarshaller();
-        } catch (JAXBException ex) {
+        }
+        catch (JAXBException ex) {
             Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -75,7 +75,8 @@ public class AmazonProductsAPI {
 
         try {
             helper = SignedRequestsHelper.getInstance(this.endpoint.getAPIdomain(), this.awsAccessKey, this.awsSecretKey);
-        } catch (final Exception ex) {
+        }
+        catch (final Exception ex) {
             Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.SEVERE, "Amazon request sign error", ex);
         }
     }
@@ -105,7 +106,8 @@ public class AmazonProductsAPI {
             is.close();
 
             return irl.getItems().get(0).getItem().get(0);
-        } catch (final Exception ex) {
+        }
+        catch (final Exception ex) {
             Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -145,7 +147,8 @@ public class AmazonProductsAPI {
             is.close();
 
             return response.getItems().get(0).getItem();
-        } catch (final Exception ex) {
+        }
+        catch (final Exception ex) {
             Logger.getLogger(AmazonProductsAPI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -156,6 +159,7 @@ public class AmazonProductsAPI {
      * Add default params to the given params, and sign the URL as Amazon wants it to be signed.
      */
     private String signUrl(final Map<String, String> params) {
+        params.put("AWSAccessKeyId", awsAccessKey);
         params.put("AssociateTag", awsAssociateTag);
         params.put("Service", "AWSECommerceService");
         params.put("Version", API_VERSION);
@@ -181,7 +185,8 @@ public class AmazonProductsAPI {
             if ((price = item.getItemAttributes().getListPrice()) != null) {
                 return price;
             }
-        } catch (final NullPointerException ex) {
+        }
+        catch (final NullPointerException ex) {
         }
 
         // Get the lowest new price from a third-party.
@@ -189,7 +194,8 @@ public class AmazonProductsAPI {
             if ((price = item.getOfferSummary().getLowestNewPrice()) != null) {
                 return price;
             }
-        } catch (final NullPointerException ex) {
+        }
+        catch (final NullPointerException ex) {
         }
 
         return price;
@@ -267,7 +273,8 @@ public class AmazonProductsAPI {
             byte[] secretyKeyBytes;
             try {
                 secretyKeyBytes = instance.awsSecretKey.getBytes(UTF8_CHARSET);
-            } catch (final UnsupportedEncodingException ex) {
+            }
+            catch (final UnsupportedEncodingException ex) {
                 secretyKeyBytes = new byte[] {};
                 Logger.getLogger(SignedRequestsHelper.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -284,7 +291,6 @@ public class AmazonProductsAPI {
          * and Amazon will reject the request.
          */
         String sign(final Map<String, String> params) {
-            params.put("AWSAccessKeyId", awsAccessKey);
             params.put("Timestamp", timestamp());
 
             // The parameters need to be processed in lexicographical order, so we'll use a TreeMap
@@ -329,7 +335,8 @@ public class AmazonProductsAPI {
                 data = stringToSign.getBytes(UTF8_CHARSET);
                 rawHmac = mac.doFinal(data);
                 signature = new String(new Base64().encode(rawHmac));
-            } catch (final UnsupportedEncodingException ex) {
+            }
+            catch (final UnsupportedEncodingException ex) {
                 throw new RuntimeException(UTF8_CHARSET + " is unsupported!", ex);
             }
             return signature;
@@ -360,9 +367,7 @@ public class AmazonProductsAPI {
     public static AmazonProductsAPI getInstance(final Endpoint endpoint,
             final String awsAccessKey, final String awsSecretKey, final String awsAssociateTag) {
         if (!INSTANCES.containsKey(endpoint)) {
-            final AmazonProductsAPI inst = new AmazonProductsAPI(awsAccessKey, awsSecretKey, awsAssociateTag, endpoint);
-
-            INSTANCES.put(endpoint, inst);
+            INSTANCES.put(endpoint, new AmazonProductsAPI(awsAccessKey, awsSecretKey, awsAssociateTag, endpoint));
         }
 
         return INSTANCES.get(endpoint);

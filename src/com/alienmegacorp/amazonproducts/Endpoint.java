@@ -2,9 +2,6 @@ package com.alienmegacorp.amazonproducts;
 
 /**
  * Defines the domains for each country the API supports.
- *
- * @author Michael Boyd <michael@alienmegacorp.com>
- * @version r1
  */
 public enum Endpoint {
     // Enum name must be an upper-case ISO 3166 country code.
@@ -12,7 +9,7 @@ public enum Endpoint {
     FR("ecs.amazonaws.fr", "www.amazon.fr"),
     DE("ecs.amazonaws.de", "www.amazon.de"),
     JP("ecs.amazonaws.jp", "www.amazon.jp"),
-    // The UK's ISO code is actually GB.
+    // The UK's ISO code is GB (Great Britain).
     GB("ecs.amazonaws.co.uk", "www.amazon.co.uk"),
     US("ecs.amazonaws.com", "www.amazon.com");
 
